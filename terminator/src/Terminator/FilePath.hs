@@ -4,7 +4,7 @@ module Terminator.FilePath
   ( FilePath, Abs, Rel, File, Dir, (/)
 
   -- * Conversion to Text
-  , absText, relText
+  , absFileText, absDirText, relFileText, relDirText
 
   ) where
 
@@ -16,7 +16,7 @@ import Data.Foldable (toList)
 import Prelude hiding (FilePath, id, (.), (/))
 
 -- containers
-import Data.Sequence (Seq)
+import Data.Sequence (Seq, (|>))
 
 -- text
 import Data.Text (Text)
@@ -24,28 +24,27 @@ import qualified Data.Text as Text
 
 type FilePath b t = Ended (Seq Text) b t
 
-type Abs  = ClosedL
+type Abs  = ClosedL ()
 type Rel  = Open
-type File = ClosedR
+type File = ClosedR Text
 type Dir  = Open
 
 (/) :: Category cat => cat a b -> cat b c -> cat a c
 (/) = flip (.)
 
-absText :: FilePath Abs t -> Text
-absText =
-  \case
-    CloseEnded xs -> f xs
-    RightOpen  xs -> f xs
-    Nil -> "/"
-  where
-    f = Text.concat . ((\x -> ["/", x]) =<<) . toList @Seq
+absFileText :: FilePath Abs File -> Text
+absFileText (CloseEnded xs () basename) = concatAbs (xs |> basename)
 
-relText :: FilePath Rel t -> Text
-relText =
-  \case
-    LeftOpen  xs -> f xs
-    OpenEnded xs -> f xs
-    Nil -> "."
-  where
-    f = Text.intercalate "/" . toList @Seq
+relFileText :: FilePath Rel File -> Text
+relFileText (LeftOpen xs basename) = concatRel (xs |> basename)
+
+absDirText :: FilePath Abs Dir -> Text
+absDirText (RightOpen xs ()) = concatAbs xs
+
+relDirText :: FilePath Rel Dir -> Text
+relDirText (OpenEnded xs) = concatRel xs
+relDirText Nil = "."
+
+concatAbs, concatRel :: Seq Text -> Text
+concatAbs = Text.concat . ((\x -> ["/", x]) =<<) . toList @Seq
+concatRel = Text.intercalate "/" . toList @Seq

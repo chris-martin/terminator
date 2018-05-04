@@ -1,7 +1,7 @@
 {-# LANGUAGE LambdaCase, GADTs, MultiParamTypeClasses #-}
 
 module Terminator
-  ( Ended (..), Open, ClosedL, ClosedR, endedMap
+  ( Ended (..), Open, ClosedL (..), ClosedR (..), endedMap
   ) where
 
 -- base
@@ -10,16 +10,16 @@ import Data.Semigroup
 import Prelude hiding ((.), id)
 
 data Open
-data ClosedL
-data ClosedR
+data ClosedL l = ClosedL l
+data ClosedR r = ClosedR r
 
 data Ended a l r
   where
-    Nil        ::      Ended a x       x
-    OpenEnded  :: a -> Ended a Open    Open
-    CloseEnded :: a -> Ended a ClosedL ClosedR
-    LeftOpen   :: a -> Ended a Open    ClosedR
-    RightOpen  :: a -> Ended a ClosedL Open
+    Nil        ::                Ended a x       x
+    OpenEnded  :: a           -> Ended a Open    Open
+    CloseEnded :: a -> l -> r -> Ended a (ClosedL l) (ClosedR r)
+    LeftOpen   :: a      -> r -> Ended a Open        (ClosedR r)
+    RightOpen  :: a -> l      -> Ended a (ClosedL l) Open
 
 instance Semigroup a => Category (Ended a)
   where
@@ -28,10 +28,10 @@ instance Semigroup a => Category (Ended a)
     Nil . l = l
     r . Nil = r
 
-    OpenEnded r . OpenEnded l = OpenEnded  (l <> r)
-    LeftOpen  r . OpenEnded l = LeftOpen   (l <> r)
-    OpenEnded r . RightOpen l = RightOpen  (l <> r)
-    LeftOpen  r . RightOpen l = CloseEnded (l <> r)
+    OpenEnded ra    . OpenEnded la    = OpenEnded  (la <> ra)
+    LeftOpen  ra rt . OpenEnded la    = LeftOpen   (la <> ra)    rt
+    OpenEnded ra    . RightOpen la lt = RightOpen  (la <> ra) lt
+    LeftOpen  ra rt . RightOpen la lt = CloseEnded (la <> ra) lt rt
 
 newtype EndedFunctor l r a = EndedFunctor (Ended a l r)
 
@@ -41,8 +41,8 @@ instance Functor (EndedFunctor l r)
 
 endedMap :: (a -> b) -> Ended a l r -> Ended b l r
 endedMap f = \case
-  Nil          -> Nil
-  OpenEnded  x -> OpenEnded  (f x)
-  CloseEnded x -> CloseEnded (f x)
-  LeftOpen   x -> LeftOpen   (f x)
-  RightOpen  x -> RightOpen  (f x)
+  Nil                -> Nil
+  OpenEnded  x       -> OpenEnded  (f x)
+  CloseEnded x lt rt -> CloseEnded (f x) lt rt
+  LeftOpen   x    rt -> LeftOpen   (f x)    rt
+  RightOpen  x lt    -> RightOpen  (f x) lt
