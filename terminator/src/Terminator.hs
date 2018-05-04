@@ -30,23 +30,22 @@ data Ended a l r
     LeftOpen   :: a      -> r -> Ended a Open        (ClosedR r)
     RightOpen  :: a -> l      -> Ended a (ClosedL l) Open
 
-instance Semigroup a => Category (Ended a)
-  where
-    id = Nil
+instance Semigroup a => Category (Ended a) where
 
-    Nil . l = l
-    r . Nil = r
+  id = Nil
 
-    OpenEnded ra    . OpenEnded la    = OpenEnded  (la <> ra)
-    LeftOpen  ra rt . OpenEnded la    = LeftOpen   (la <> ra)    rt
-    OpenEnded ra    . RightOpen la lt = RightOpen  (la <> ra) lt
-    LeftOpen  ra rt . RightOpen la lt = CloseEnded (la <> ra) lt rt
+  Nil . l = l
+  r . Nil = r
+
+  OpenEnded ra    . OpenEnded la    = OpenEnded  (la <> ra)
+  LeftOpen  ra rt . OpenEnded la    = LeftOpen   (la <> ra)    rt
+  OpenEnded ra    . RightOpen la lt = RightOpen  (la <> ra) lt
+  LeftOpen  ra rt . RightOpen la lt = CloseEnded (la <> ra) lt rt
 
 newtype EndedFunctor l r a = EndedFunctor (Ended a l r)
 
-instance Functor (EndedFunctor l r)
-  where
-    fmap f (EndedFunctor e) = EndedFunctor (endedMap f e)
+instance Functor (EndedFunctor l r) where
+  fmap f (EndedFunctor e) = EndedFunctor (endedMap f e)
 
 endedMap :: (a -> b) -> Ended a l r -> Ended b l r
 endedMap f = \case
