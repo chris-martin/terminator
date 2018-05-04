@@ -6,7 +6,7 @@ module Terminator
     Ended (..)
 
   -- * The terminators
-  , Open, ClosedL (..), ClosedR (..)
+  , Open, ClosedL, ClosedR
 
   -- * Functor
   , endedMap, EndedFunctor (..)
@@ -19,13 +19,13 @@ import Data.Semigroup
 import Prelude hiding ((.), id)
 
 data Open
-data ClosedL l = ClosedL l
-data ClosedR r = ClosedR r
+data ClosedL l
+data ClosedR r
 
 data Ended a l r
   where
-    Nil        ::                Ended a x       x
-    OpenEnded  :: a           -> Ended a Open    Open
+    Nil        ::                Ended a x           x
+    OpenEnded  :: a           -> Ended a Open        Open
     CloseEnded :: a -> l -> r -> Ended a (ClosedL l) (ClosedR r)
     LeftOpen   :: a      -> r -> Ended a Open        (ClosedR r)
     RightOpen  :: a -> l      -> Ended a (ClosedL l) Open
