@@ -9,7 +9,7 @@ module Terminator.FilePath
   , Abs, Rel, File, Dir
 
   -- * Constructing file paths
-  , (/), emptyPath
+  , (/), emptyPath, file
 
   -- * Conversion to Text
   , absFileText, absDirText, relFileText, relDirText
@@ -44,11 +44,14 @@ type Dir  = Open
 emptyPath :: FilePath Rel Dir
 emptyPath = OpenEnded Seq.empty
 
+file :: Text -> FilePath Rel File
+file n = LeftOpen Seq.empty n
+
 absFileText :: FilePath Abs File -> Text
-absFileText (CloseEnded xs () basename) = concatAbs (xs |> basename)
+absFileText (CloseEnded xs () n) = concatAbs (xs |> n)
 
 relFileText :: FilePath Rel File -> Text
-relFileText (LeftOpen xs basename) = concatRel (xs |> basename)
+relFileText (LeftOpen xs n) = concatRel (xs |> n)
 
 absDirText :: FilePath Abs Dir -> Text
 absDirText (RightOpen xs ()) = concatAbs xs
