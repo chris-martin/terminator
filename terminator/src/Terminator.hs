@@ -1,7 +1,16 @@
 {-# LANGUAGE LambdaCase, GADTs, MultiParamTypeClasses #-}
 
 module Terminator
-  ( Ended (..), Open, ClosedL (..), ClosedR (..), endedMap
+  (
+  -- * The main type
+    Ended (..)
+
+  -- * The terminators
+  , Open, ClosedL (..), ClosedR (..)
+
+  -- * Functor
+  , endedMap, EndedFunctor (..)
+
   ) where
 
 -- base
