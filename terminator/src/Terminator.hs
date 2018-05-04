@@ -2,7 +2,7 @@
 
 module Terminator
   (
-  -- * The main type
+  -- * The Ended type
     Ended (..)
 
   -- * The terminators

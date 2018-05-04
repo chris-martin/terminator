@@ -1,7 +1,15 @@
 {-# LANGUAGE GADTs, LambdaCase, OverloadedStrings, TypeApplications #-}
 
 module Terminator.FilePath
-  ( FilePath, Abs, Rel, File, Dir, (/)
+  (
+  -- The FilePath type
+    FilePath
+
+  -- * The terminators
+  , Abs, Rel, File, Dir
+
+  -- * Combination functions
+  , (/)
 
   -- * Conversion to Text
   , absFileText, absDirText, relFileText, relDirText
@@ -29,7 +37,7 @@ type Rel  = Open
 type File = ClosedR Text
 type Dir  = Open
 
-(/) :: Category cat => cat a b -> cat b c -> cat a c
+(/) :: FilePath a b -> FilePath b c -> FilePath a c
 (/) = flip (.)
 
 absFileText :: FilePath Abs File -> Text
