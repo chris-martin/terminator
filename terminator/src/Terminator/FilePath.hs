@@ -9,7 +9,7 @@ module Terminator.FilePath
   , Abs, Rel, File, Dir
 
   -- * Constructing file paths
-  , (/), emptyPath, file
+  , (/), root, emptyPath, file
 
   -- * Conversion to Text
   , absFileText, absDirText, relFileText, relDirText
@@ -40,6 +40,9 @@ type Dir  = Open
 
 (/) :: FilePath a b -> FilePath b c -> FilePath a c
 (/) = flip (.)
+
+root :: FilePath Abs Dir
+root = RightOpen Seq.empty ()
 
 emptyPath :: FilePath Rel Dir
 emptyPath = OpenEnded Seq.empty
