@@ -20,7 +20,7 @@ build-type: Simple
 cabal-version: >= 1.10
 
 extra-source-files:
-    README.md
+    readme.md
 
 source-repository head
   type: git
