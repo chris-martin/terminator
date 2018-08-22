@@ -1,7 +1,11 @@
-module Terminator.Terminals (Open, L, R) where
+module Terminator.Terminals
+  ( Open
+  , LeftTerminal
+  , RightTerminal
+  ) where
 
 data Open
 
-data L l
+data LeftTerminal l
 
-data R r
+data RightTerminal r

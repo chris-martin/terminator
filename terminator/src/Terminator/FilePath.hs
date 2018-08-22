@@ -33,9 +33,9 @@ import qualified Data.Text as Text
 
 type FilePath b t = Ended (Seq DirName) b t
 
-type Abs  = L ()
+type Abs  = LeftTerminal ()
 type Rel  = Open
-type File = R FileName
+type File = RightTerminal FileName
 type Dir  = Open
 
 newtype DirName = DirName PathSegment

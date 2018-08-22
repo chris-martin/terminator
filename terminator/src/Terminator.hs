@@ -6,7 +6,7 @@ module Terminator
     Ended (..)
 
   -- * The terminals
-  , Open, L, R
+  , Open, LeftTerminal, RightTerminal
 
   -- * Functor
   , endedMap, EndedFunctor (..)
@@ -22,11 +22,11 @@ import Prelude hiding ((.), id)
 
 data Ended a l r
   where
-    Nil        ::                Ended a x     x
-    OpenEnded  :: a           -> Ended a Open  Open
-    CloseEnded :: a -> l -> r -> Ended a (L l) (R r)
-    LeftOpen   :: a      -> r -> Ended a Open  (R r)
-    RightOpen  :: a -> l      -> Ended a (L l) Open
+    Nil        ::                Ended a x                x
+    OpenEnded  :: a           -> Ended a Open             Open
+    CloseEnded :: a -> l -> r -> Ended a (LeftTerminal l) (RightTerminal r)
+    LeftOpen   :: a      -> r -> Ended a Open             (RightTerminal r)
+    RightOpen  :: a -> l      -> Ended a (LeftTerminal l) Open
 
 instance Semigroup a => Category (Ended a) where
 
