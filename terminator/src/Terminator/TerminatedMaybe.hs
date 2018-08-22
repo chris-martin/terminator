@@ -3,6 +3,7 @@
 module Terminator.TerminatedMaybe
   ( TerminatedMaybe (..)
   , (.)
+  , map
   ) where
 
 import Terminator.Terminals
@@ -41,3 +42,14 @@ OpenEnded ra    . OpenEnded la    = OpenEnded  (la <> ra)
 LeftOpen  ra rt . OpenEnded la    = LeftOpen   (la <> ra)    rt
 OpenEnded ra    . RightOpen la lt = RightOpen  (la <> ra) lt
 LeftOpen  ra rt . RightOpen la lt = CloseEnded (la <> ra) lt rt
+
+map :: (a -> b)
+    -> TerminatedMaybe a l r
+    -> TerminatedMaybe b l r
+
+map _ Nil = Nil
+
+map f (OpenEnded  x      ) = OpenEnded  (f x)
+map f (CloseEnded x lt rt) = CloseEnded (f x) lt rt
+map f (LeftOpen   x    rt) = LeftOpen   (f x)    rt
+map f (RightOpen  x lt   ) = RightOpen  (f x) lt
