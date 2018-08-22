@@ -1,4 +1,4 @@
-{-# LANGUAGE GADTs, LambdaCase, OverloadedStrings, TypeApplications #-}
+{-# LANGUAGE GADTs, TypeApplications #-}
 
 module Terminator.FilePath
   (
@@ -16,12 +16,13 @@ module Terminator.FilePath
 
   ) where
 
-import Terminator
+import Terminator.Terminals
+import Terminator.Terminated (Terminated (..))
+import qualified Terminator.Terminated as Terminated
 
 -- base
-import Control.Category
 import Data.Foldable (toList)
-import Prelude hiding (FilePath, id, (.), (/))
+import Prelude hiding (FilePath, id, (/))
 
 -- containers
 import Data.Sequence (Seq, (|>))
@@ -31,7 +32,7 @@ import qualified Data.Sequence as Seq
 import Data.Text (Text)
 import qualified Data.Text as Text
 
-type FilePath b t = TerminatedMaybe (Seq DirName) b t
+type FilePath b t = Terminated (Seq DirName) b t
 
 type Abs  = LeftTerminal ()
 type Rel  = Open
@@ -60,7 +61,7 @@ fileNameText :: FileName -> Text
 fileNameText (FileName (PathSegment x)) = x
 
 (/) :: FilePath a b -> FilePath b c -> FilePath a c
-(/) = flip (.)
+(/) = flip (Terminated..)
 
 root :: FilePath Abs Dir
 root = RightOpen Seq.empty ()
@@ -87,10 +88,11 @@ absDirText (RightOpen xs ()) =
   concatAbs (dirNameText <$> xs)
 
 relDirText :: FilePath Rel Dir -> Text
-relDirText = \case
-  Nil -> "."
-  OpenEnded xs -> concatRel (dirNameText <$> xs)
+relDirText (OpenEnded xs) =
+  if (Seq.null xs) then Text.pack "." else concatRel (dirNameText <$> xs)
 
-concatAbs, concatRel :: Seq Text -> Text
-concatAbs = Text.concat . ((\x -> ["/", x]) =<<) . toList @Seq
-concatRel = Text.intercalate "/" . toList @Seq
+concatAbs :: Seq Text -> Text
+concatAbs = Text.concat . ((\x -> [Text.pack "/", x]) =<<) . toList @Seq
+
+concatRel :: Seq Text -> Text
+concatRel = Text.intercalate (Text.pack "/") . toList @Seq
