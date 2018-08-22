@@ -1,3 +1,0 @@
-module Terminator.Category
-  (
-  ) where
