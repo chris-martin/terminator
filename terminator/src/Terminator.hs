@@ -2,14 +2,14 @@
 
 module Terminator
   (
-  -- * The Ended type
-    Ended (..)
+  -- * The TerminatedMaybe type
+    TerminatedMaybe (..)
 
   -- * The terminals
   , Open, LeftTerminal, RightTerminal
 
   -- * Functor
-  , endedMap, EndedFunctor (..)
+  , terminatedMap, EndedFunctor (..)
 
   ) where
 
@@ -20,15 +20,15 @@ import Control.Category
 import Data.Semigroup
 import Prelude hiding ((.), id)
 
-data Ended a l r
+data TerminatedMaybe a l r
   where
-    Nil        ::                Ended a x                x
-    OpenEnded  :: a           -> Ended a Open             Open
-    CloseEnded :: a -> l -> r -> Ended a (LeftTerminal l) (RightTerminal r)
-    LeftOpen   :: a      -> r -> Ended a Open             (RightTerminal r)
-    RightOpen  :: a -> l      -> Ended a (LeftTerminal l) Open
+    Nil        ::                TerminatedMaybe a x                x
+    OpenEnded  :: a           -> TerminatedMaybe a Open             Open
+    CloseEnded :: a -> l -> r -> TerminatedMaybe a (LeftTerminal l) (RightTerminal r)
+    LeftOpen   :: a      -> r -> TerminatedMaybe a Open             (RightTerminal r)
+    RightOpen  :: a -> l      -> TerminatedMaybe a (LeftTerminal l) Open
 
-instance Semigroup a => Category (Ended a) where
+instance Semigroup a => Category (TerminatedMaybe a) where
 
   id = Nil
 
@@ -40,21 +40,21 @@ instance Semigroup a => Category (Ended a) where
   OpenEnded ra    . RightOpen la lt = RightOpen  (la <> ra) lt
   LeftOpen  ra rt . RightOpen la lt = CloseEnded (la <> ra) lt rt
 
-instance Semigroup a => Semigroup (Ended a Open Open)
+instance Semigroup a => Semigroup (TerminatedMaybe a Open Open)
   where
     (<>) = (.)
 
-newtype EndedFunctor l r a = EndedFunctor (Ended a l r)
+newtype EndedFunctor l r a = EndedFunctor (TerminatedMaybe a l r)
 
 instance Functor (EndedFunctor l r) where
-  fmap f (EndedFunctor e) = EndedFunctor (endedMap f e)
+  fmap f (EndedFunctor e) = EndedFunctor (terminatedMap f e)
 
 instance Semigroup a => Semigroup (EndedFunctor Open Open a)
   where
     EndedFunctor a <> EndedFunctor b = EndedFunctor (a <> b)
 
-endedMap :: (a -> b) -> Ended a l r -> Ended b l r
-endedMap f = \case
+terminatedMap :: (a -> b) -> TerminatedMaybe a l r -> TerminatedMaybe b l r
+terminatedMap f = \case
   Nil                -> Nil
   OpenEnded  x       -> OpenEnded  (f x)
   CloseEnded x lt rt -> CloseEnded (f x) lt rt

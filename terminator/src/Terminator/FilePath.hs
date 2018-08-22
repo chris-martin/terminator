@@ -31,7 +31,7 @@ import qualified Data.Sequence as Seq
 import Data.Text (Text)
 import qualified Data.Text as Text
 
-type FilePath b t = Ended (Seq DirName) b t
+type FilePath b t = TerminatedMaybe (Seq DirName) b t
 
 type Abs  = LeftTerminal ()
 type Rel  = Open
