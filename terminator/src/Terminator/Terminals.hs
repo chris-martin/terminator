@@ -4,6 +4,9 @@ module Terminator.Terminals
   , RightTerminal
   ) where
 
+-- base
+import Prelude ()
+
 data Open
 
 data LeftTerminal l
