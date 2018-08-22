@@ -1,4 +1,4 @@
-{-# LANGUAGE LambdaCase, GADTs, MultiParamTypeClasses #-}
+{-# LANGUAGE LambdaCase, FlexibleInstances, GADTs, MultiParamTypeClasses #-}
 
 module Terminator
   (
@@ -42,10 +42,18 @@ instance Semigroup a => Category (Ended a) where
   OpenEnded ra    . RightOpen la lt = RightOpen  (la <> ra) lt
   LeftOpen  ra rt . RightOpen la lt = CloseEnded (la <> ra) lt rt
 
+instance Semigroup a => Semigroup (Ended a Open Open)
+  where
+    (<>) = (.)
+
 newtype EndedFunctor l r a = EndedFunctor (Ended a l r)
 
 instance Functor (EndedFunctor l r) where
   fmap f (EndedFunctor e) = EndedFunctor (endedMap f e)
+
+instance Semigroup a => Semigroup (EndedFunctor Open Open a)
+  where
+    EndedFunctor a <> EndedFunctor b = EndedFunctor (a <> b)
 
 endedMap :: (a -> b) -> Ended a l r -> Ended b l r
 endedMap f = \case
