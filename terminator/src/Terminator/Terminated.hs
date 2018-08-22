@@ -3,6 +3,7 @@
 module Terminator.Terminated
   ( Terminated (..)
   , (.)
+  , map
   ) where
 
 import Terminator.Terminals
@@ -31,3 +32,12 @@ OpenEnded ra    . OpenEnded la    = OpenEnded  (la <> ra)
 LeftOpen  ra rt . OpenEnded la    = LeftOpen   (la <> ra)    rt
 OpenEnded ra    . RightOpen la lt = RightOpen  (la <> ra) lt
 LeftOpen  ra rt . RightOpen la lt = CloseEnded (la <> ra) lt rt
+
+map :: (a -> b)
+    -> Terminated a l r
+    -> Terminated b l r
+
+map f (OpenEnded  x      ) = OpenEnded  (f x)
+map f (CloseEnded x lt rt) = CloseEnded (f x) lt rt
+map f (LeftOpen   x    rt) = LeftOpen   (f x)    rt
+map f (RightOpen  x lt   ) = RightOpen  (f x) lt
