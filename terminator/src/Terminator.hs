@@ -13,14 +13,12 @@ module Terminator
 
   ) where
 
+import Terminator.Terminations
+
 -- base
 import Control.Category
 import Data.Semigroup
 import Prelude hiding ((.), id)
-
-data Open
-data L l
-data R r
 
 data Ended a l r
   where
