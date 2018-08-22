@@ -14,7 +14,7 @@ module Terminator
   ) where
 
 import Terminator.Terminals
-import Terminator.TerminatedMaybe
+import Terminator.TerminatedMaybe (TerminatedMaybe (..))
 
 -- base
 import Data.Semigroup
