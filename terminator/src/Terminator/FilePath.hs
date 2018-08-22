@@ -1,5 +1,7 @@
 {-# LANGUAGE GADTs, TypeApplications #-}
 
+{-# OPTIONS_GHC -fno-warn-unused-top-binds #-} -- todo
+
 module Terminator.FilePath
   (
   -- The FilePath type
