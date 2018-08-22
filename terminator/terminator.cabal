@@ -37,7 +37,7 @@ library
   exposed-modules:
       Terminator
     , Terminator.FilePath
-    , Terminator.Terminations
+    , Terminator.Terminals
 
 test-suite doctest
   default-language: Haskell2010

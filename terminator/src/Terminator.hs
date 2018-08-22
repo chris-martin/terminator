@@ -5,7 +5,7 @@ module Terminator
   -- * The Ended type
     Ended (..)
 
-  -- * The terminators
+  -- * The terminals
   , Open, L, R
 
   -- * Functor
@@ -13,7 +13,7 @@ module Terminator
 
   ) where
 
-import Terminator.Terminations
+import Terminator.Terminals
 
 -- base
 import Control.Category
