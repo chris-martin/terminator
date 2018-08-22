@@ -1,6 +1,7 @@
 {-# LANGUAGE GADTs, TypeApplications #-}
 
-{-# OPTIONS_GHC -fno-warn-unused-top-binds #-} -- todo
+-- todo: This is temporary while the module is under development.
+{-# OPTIONS_GHC -fno-warn-unused-top-binds #-}
 
 module Terminator.FilePath
   (
