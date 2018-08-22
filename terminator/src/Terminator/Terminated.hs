@@ -1,5 +1,7 @@
 {-# LANGUAGE FlexibleInstances, GADTs #-}
 
+{-# OPTIONS_GHC -fno-warn-incomplete-patterns #-}
+
 module Terminator.Terminated
   ( Terminated (..)
   , (.)
